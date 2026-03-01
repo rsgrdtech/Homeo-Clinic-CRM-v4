@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient CRM - Homeopathic Practice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2c3e50;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--secondary), var(--dark));
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 15px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--danger);
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .patient-section {
+            grid-column: 1;
+        }
+        
+        .remedies-section {
+            grid-column: 2;
+        }
+        
+        .history-section {
+            grid-column: 1 / -1;
+        }
+        
+        .remedy-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .remedy-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .remedy-item:hover {
+            background-color: #f0f7ff;
+        }
+        
+        .remedy-item.available {
+            border-left-color: var(--success);
+            background-color: #f0fff4;
+        }
+        
+        .remedy-item.unavailable {
+            border-left-color: var(--danger);
+            background-color: #fff0f0;
+        }
+        
+        .remedy-name {
+            font-weight: 500;
+        }
+        
+        .remedy-details {
+            font-size: 0.85em;
+            color: #666;
+        }
+        
+        .remedy-info {
+            flex-grow: 1;
+        }
+        
+        .remedy-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .info-link {
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+        
+        .prescription-text {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        .visit-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .visit-item {
+            padding: 15px;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 10px;
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .visit-date {
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        .details-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .close-btn {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .remedy-detail-frame {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        
+        .status-message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .patient-search-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .patient-search-section input {
+            flex: 1;
+        }
+        
+        .collapsible {
+            cursor: pointer;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .collapsible-content {
+            padding: 0 18px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            margin-bottom: 15px;
+        }
+        
+        .collapsible.active {
+            background-color: #e9f7fe;
+        }
+        
+        .patient-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .patient-details {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .previous-visit {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .visit-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .patient-section, .remedies-section {
+                grid-column: 1;
+            }
+            
+            .patient-search-section {
+                flex-direction: column;
+            }
+            
+            .patient-info-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .remedy-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .remedy-actions {
+                align-self: flex-end;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-user-md"></i> Patient CRM - Homeopathic Practice</h1>
+            <p>Track patient visits and prescribe remedies efficiently</p>
+        </header>
+        
+        <div class="card">
+            <h2>Patient Search</h2>
+            <div class="patient-search-section">
+                <input type="tel" id="searchPhone" placeholder="Enter patient's cell phone number">
+                <button id="searchPatient"><i class="fas fa-search"></i> Search Patient</button>
+                <button id="newPatient" class="btn-success"><i class="fas fa-user-plus"></i> New Patient</button>
+            </div>
+            <div id="searchStatus" class="status-message" style="display: none;"></div>
+        </div>
+        
+        <div class="card" id="patientFormSection" style="display: none;">
+            <div class="collapsible" id="patientInfoCollapsible">
+                <div class="patient-info-header">
+                    <div>
+                        <h3 id="patientHeader">Patient Information</h3>
+                        <div class="patient-details" id="patientDetails">
+                            <!-- Patient info will be displayed here -->
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            <div class="collapsible-content" id="patientInfoContent">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="firstName" class="required">First Name</label>
+                        <input type="text" id="firstName" placeholder="Patient's first name">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" placeholder="Patient's last name">
+                    </div>
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" id="dob">
+                    </div>
+                    <div class="form-group">
+                        <label for="age">Age (if DOB not available)</label>
+                        <input type="number" id="age" min="0" max="120" placeholder="Age">
+                    </div>
+                    <div class="form-group">
+                        <label for="sex" class="required">Sex</label>
+                        <select id="sex">
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="address" class="required">Address</label>
+                        <input type="text" id="address" placeholder="Street address">
+                    </div>
+                    <div class="form-group">
+                        <label for="city" class="required">City</label>
+                        <input type="text" id="city" placeholder="City">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <select id="state">
+                            <option value="CA" selected>California (CA)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="required">Cell Phone #</label>
+                        <input type="tel" id="phone" placeholder="(123) 456-7890">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="previous-visit" id="previousVisitSection" style="display: none;">
+                <h3>Previous Visit Information</h3>
+                <div class="form-group">
+                    <label for="prevSymptoms">Symptoms from Last Visit</label>
+                    <textarea id="prevSymptoms" readonly></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="prevDiagnosis">Diagnosis from Last Visit</label>
+                    <textarea id="prevDiagnosis" readonly></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="prevPrescription">Prescription from Last Visit</label>
+                    <textarea id="prevPrescription" readonly></textarea>
+                </div>
+                <div class="visit-navigation">
+                    <button id="prevVisitBtn"><i class="fas fa-arrow-left"></i> Previous Visit</button>
+                    <span id="currentVisitDisplay">Visit 1 of 1</span>
+                    <button id="nextVisitBtn">Next Visit <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            
+            <div class="grid">
+                <div class="patient-section">
+                    <h3>Current Visit Details</h3>
+                    <div class="form-group">
+                        <label for="visitDate">Visit Date</label>
+                        <input type="date" id="visitDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="symptoms">Symptoms</label>
+                        <textarea id="symptoms" placeholder="Enter symptoms separated by semicolons (;)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="diagnosis">Diagnosis</label>
+                        <textarea id="diagnosis" placeholder="Enter diagnosis"></textarea>
+                    </div>
+                    <button id="repeatPrescription" class="btn-warning" style="display: none;"><i class="fas fa-redo"></i> Repeat Last Prescription</button>
+                    <button id="saveVisit" class="btn-success"><i class="fas fa-save"></i> Save Visit</button>
+                    <div id="saveStatus" class="status-message" style="display: none;"></div>
+                </div>
+                
+                <div class="remedies-section">
+                    <h3>Prescription</h3>
+                    <div class="form-group">
+                        <textarea id="prescription" class="prescription-text" placeholder="Remedies will be added here with today's date automatically"></textarea>
+                    </div>
+                    
+                    <h3>Remedies Database</h3>
+                    <div class="form-group">
+                        <label for="remedySearch">Search Remedies</label>
+                        <input type="text" id="remedySearch" placeholder="Search by name or potency">
+                    </div>
+                    
+                    <div class="status-message status-info" id="remedyStatus">
+                        Loading remedies database...
+                    </div>
+                    
+                    <div class="remedy-list" id="remedyList">
+                        <!-- Remedies will be populated here -->
+                    </div>
+                    
+                    <div style="margin-top: 10px;">
+                        <button id="connectDataSource" class="btn-warning"><i class="fas fa-database"></i> Connect to Alternate Data Source</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="history-section card" id="historySection" style="display: none;">
+            <h3>Visit History</h3>
+            <div class="visit-history" id="visitHistory">
+                <!-- Visit history will be populated here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Remedy Detail Modal -->
+    <div class="details-modal" id="detailsModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <h3>Remedy Details</h3>
+            <div id="remedyDetailContent">
+                <!-- Remedy details will be populated here -->
+            </div>
+            <iframe class="remedy-detail-frame" id="remedyDetailFrame"></iframe>
+        </div>
+    </div>
+    
+    <!-- Alternate Data Source Modal -->
+    <div class="details-modal" id="dataSourceModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" id="closeDataSourceModal">&times;</span>
+            <h3>Connect to Alternate Data Source</h3>
+            <div class="form-group">
+                <label for="sheetUrl">Google Sheet URL</label>
+                <input type="text" id="sheetUrl" placeholder="Paste Google Sheet URL here">
+            </div>
+            <button id="connectSheet">Connect</button>
+            <div id="dataSourceStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const DEFAULT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/11aZgt8hafBHfu0ZHeuyQH_MS09791YHXy_r-7LWc8KM/edit?usp=sharing';
+        const MATERIA_MEDICA_BASE_URL = 'https://www.materiamedica.info/en/materia-medica/john-henry-clarke/';
+        const STORAGE_KEY = 'homeopathic_patient_records';
+        
+        // State
+        let currentPatient = null;
+        let remediesData = [];
+        let currentSheetUrl = DEFAULT_SHEET_URL;
+        let currentVisitIndex = 0;
+        let addedRemedies = new Set(); // Track remedies already added to prescription
+        
+        // DOM Elements
+        const patientFormSection = document.getElementById('patientFormSection');
+        const historySection = document.getElementById('historySection');
+        const searchPhone = document.getElementById('searchPhone');
+        const searchPatientBtn = document.getElementById('searchPatient');
+        const newPatientBtn = document.getElementById('newPatient');
+        const searchStatus = document.getElementById('searchStatus');
+        const patientInfoCollapsible = document.getElementById('patientInfoCollapsible');
+        const patientInfoContent = document.getElementById('patientInfoContent');
+        const patientHeader = document.getElementById('patientHeader');
+        const patientDetails = document.getElementById('patientDetails');
+        const previousVisitSection = document.getElementById('previousVisitSection');
+        const prevSymptoms = document.getElementById('prevSymptoms');
+        const prevDiagnosis = document.getElementById('prevDiagnosis');
+        const prevPrescription = document.getElementById('prevPrescription');
+        const prevVisitBtn = document.getElementById('prevVisitBtn');
+        const nextVisitBtn = document.getElementById('nextVisitBtn');
+        const currentVisitDisplay = document.getElementById('currentVisitDisplay');
+        const repeatPrescriptionBtn = document.getElementById('repeatPrescription');
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const dob = document.getElementById('dob');
+        const age = document.getElementById('age');
+        const sex = document.getElementById('sex');
+        const address = document.getElementById('address');
+        const city = document.getElementById('city');
+        const state = document.getElementById('state');
+        const phone = document.getElementById('phone');
+        const visitDate = document.getElementById('visitDate');
+        const symptoms = document.getElementById('symptoms');
+        const diagnosis = document.getElementById('diagnosis');
+        const prescription = document.getElementById('prescription');
+        const remedySearch = document.getElementById('remedySearch');
+        const remedyList = document.getElementById('remedyList');
+        const remedyStatus = document.getElementById('remedyStatus');
+        const detailsModal = document.getElementById('detailsModal');
+        const remedyDetailContent = document.getElementById('remedyDetailContent');
+        const remedyDetailFrame = document.getElementById('remedyDetailFrame');
+        const closeModal = document.getElementById('closeModal');
+        const dataSourceModal = document.getElementById('dataSourceModal');
+        const closeDataSourceModal = document.getElementById('closeDataSourceModal');
+        const connectDataSource = document.getElementById('connectDataSource');
+        const sheetUrlInput = document.getElementById('sheetUrl');
+        const connectSheet = document.getElementById('connectSheet');
+        const dataSourceStatus = document.getElementById('dataSourceStatus');
+        const saveVisitBtn = document.getElementById('saveVisit');
+        const saveStatus = document.getElementById('saveStatus');
+        const visitHistory = document.getElementById('visitHistory');
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set today's date as default visit date with proper year handling
+            const today = getTodayDate();
+            visitDate.value = today;
+            
+            // Update prescription with today's date
+            updatePrescriptionDate();
+            
+            // Load remedies database
+            loadRemediesData();
+            
+            // Set up event listeners
+            setupEventListeners();
+        });
+        
+        // Fix date parsing to handle year correctly
+        function getTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function updatePrescriptionDate() {
+            // Get the current date value
+            let dateString = visitDate.value;
+            
+            // If no date is selected, use today's date
+            if (!dateString) {
+                dateString = getTodayDate();
+                visitDate.value = dateString;
+            }
+            
+            // Clear and update prescription with selected date
+            const currentText = prescription.value;
+            
+            // Remove any existing date header
+            const lines = currentText.split('\n');
+            let remediesText = '';
+            
+            // Check if first line is a date header
+            if (lines.length > 0 && lines[0].includes('Date:')) {
+                // Keep only the remedies (everything after the date line)
+                remediesText = lines.slice(1).join('\n').trim();
+            } else {
+                // No date header found, use the entire text
+                remediesText = currentText.trim();
+            }
+            
+            // Add new date header
+            const newText = `Date: ${formatDateForDisplay(dateString)}\n${remediesText}`;
+            prescription.value = newText.trim();
+        }
+        
+        function formatDateForDisplay(dateString) {
+            // Parse date correctly to avoid year issues
+            const dateObj = new Date(dateString);
+            
+            // Validate the date
+            if (isNaN(dateObj.getTime())) {
+                // If invalid, use today's date
+                const today = new Date();
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return today.toLocaleDateString(undefined, options);
+            }
+            
+            // Format the date properly
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return dateObj.toLocaleDateString(undefined, options);
+        }
+        
+        function setupEventListeners() {
+            // Patient management
+            searchPatientBtn.addEventListener('click', searchPatient);
+            newPatientBtn.addEventListener('click', newPatient);
+            
+            // Collapsible patient info
+            patientInfoCollapsible.addEventListener('click', togglePatientInfo);
+            
+            // Previous visit navigation
+            prevVisitBtn.addEventListener('click', showPreviousVisit);
+            nextVisitBtn.addEventListener('click', showNextVisit);
+            
+            // Remedy search
+            remedySearch.addEventListener('input', searchRemedies);
+            
+            // Modal controls
+            closeModal.addEventListener('click', () => {
+                detailsModal.style.display = 'none';
+            });
+            
+            closeDataSourceModal.addEventListener('click', () => {
+                dataSourceModal.style.display = 'none';
+            });
+            
+            // Data source connection
+            connectDataSource.addEventListener('click', () => {
+                sheetUrlInput.value = currentSheetUrl;
+                dataSourceModal.style.display = 'flex';
+            });
+            
+            connectSheet.addEventListener('click', connectToAlternateDataSource);
+            
+            // Save visit
+            saveVisitBtn.addEventListener('click', saveVisit);
+            
+            // Repeat prescription
+            repeatPrescriptionBtn.addEventListener('click', repeatPrescription);
+            
+            // Update prescription date when visit date changes
+            visitDate.addEventListener('change', updatePrescriptionDate);
+        }
+        
+        function togglePatientInfo() {
+            patientInfoCollapsible.classList.toggle('active');
+            if (patientInfoContent.style.maxHeight) {
+                patientInfoContent.style.maxHeight = null;
+            } else {
+                patientInfoContent.style.maxHeight = patientInfoContent.scrollHeight + "px";
+            }
+        }
+        
+        function searchPatient() {
+            const phoneNumber = searchPhone.value.trim().replace(/\D/g, '');
+            
+            if (!phoneNumber) {
+                showSearchStatus('Please enter a phone number', 'error');
+                return;
+            }
+            
+            const patientRecord = getPatientRecord(phoneNumber);
+            
+            if (patientRecord) {
+                loadPatient(phoneNumber, patientRecord);
+                showSearchStatus('Patient found!', 'success');
+            } else {
+                showSearchStatus('No patient found with that phone number', 'error');
+            }
+        }
+        
+        function newPatient() {
+            // Clear the form
+            clearPatientForm();
+            
+            // Show the form section
+            patientFormSection.style.display = 'block';
+            historySection.style.display = 'none';
+            previousVisitSection.style.display = 'none';
+            repeatPrescriptionBtn.style.display = 'none'; // Hide for new patients
+            
+            // Set focus to first name
+            firstName.focus();
+            
+            // Clear search
+            searchPhone.value = '';
+            searchStatus.style.display = 'none';
+            currentPatient = null;
+            addedRemedies.clear(); // Clear added remedies set
+            
+            // Update patient header
+            patientHeader.textContent = 'New Patient';
+            patientDetails.textContent = 'Please fill in patient information below';
+        }
+        
+        function clearPatientForm() {
+            firstName.value = '';
+            lastName.value = '';
+            dob.value = '';
+            age.value = '';
+            sex.value = '';
+            address.value = '';
+            city.value = '';
+            state.value = 'CA';
+            phone.value = '';
+            symptoms.value = '';
+            diagnosis.value = '';
+            prescription.value = '';
+            
+            // Set today's date with proper year handling
+            const today = getTodayDate();
+            visitDate.value = today;
+            updatePrescriptionDate();
+            
+            // Clear visit history
+            visitHistory.innerHTML = '';
+            
+            // Clear previous visit section
+            prevSymptoms.value = '';
+            prevDiagnosis.value = '';
+            prevPrescription.value = '';
+            currentVisitDisplay.textContent = 'Visit 0 of 0';
+            currentVisitIndex = 0;
+            
+            // Clear added remedies set
+            addedRemedies.clear();
+        }
+        
+        function showSearchStatus(message, type) {
+            searchStatus.textContent = message;
+            searchStatus.className = `status-message status-${type}`;
+            searchStatus.style.display = 'block';
+        }
+        
+        // PATIENT DATA STORAGE FUNCTIONS
+        
+        function getAllPatientRecords() {
+            try {
+                const recordsJson = localStorage.getItem(STORAGE_KEY);
+                return recordsJson ? JSON.parse(recordsJson) : {};
+            } catch (e) {
+                console.error('Error reading patient records:', e);
+                return {};
+            }
+        }
+        
+        function savePatientRecord(patientId, patientData) {
+            try {
+                const records = getAllPatientRecords();
+                records[patientId] = patientData;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+                console.log(`Patient ${patientId} saved successfully`);
+                return true;
+            } catch (e) {
+                console.error('Error saving patient record:', e);
+                return false;
+            }
+        }
+        
+        function getPatientRecord(patientId) {
+            const records = getAllPatientRecords();
+            return records[patientId] || null;
+        }
+        
+        function loadPatient(patientId, patientRecord) {
+            currentPatient = patientId;
+            const data = patientRecord;
+            
+            // Populate patient form
+            firstName.value = data.firstName || '';
+            lastName.value = data.lastName || '';
+            dob.value = data.dob || '';
+            age.value = data.age || '';
+            sex.value = data.sex || '';
+            address.value = data.address || '';
+            city.value = data.city || '';
+            state.value = data.state || 'CA';
+            phone.value = data.phone || '';
+            
+            // Update patient header with patient info
+            patientHeader.textContent = `${data.firstName} ${data.lastName}`;
+            
+            // Calculate age if DOB is provided
+            let ageText = data.age ? `${data.age} years` : '';
+            if (data.dob) {
+                const birthDate = new Date(data.dob);
+                const today = new Date();
+                const calculatedAge = today.getFullYear() - birthDate.getFullYear();
+                ageText = calculatedAge + ' years';
+            }
+            
+            patientDetails.innerHTML = `
+                <div><strong>Sex:</strong> ${data.sex}</div>
+                <div><strong>Age:</strong> ${ageText}</div>
+                <div><strong>Phone:</strong> ${data.phone}</div>
+                <div><strong>City:</strong> ${data.city}</div>
+            `;
+            
+            // Update prescription with today's date
+            updatePrescriptionDate();
+            
+            // Load visit history
+            loadVisitHistory(data.visits || []);
+            
+            // Show previous visit if there are visits
+            if (data.visits && data.visits.length > 0) {
+                currentVisitIndex = data.visits.length - 1; // Start with most recent
+                showVisitDetails(currentVisitIndex);
+                previousVisitSection.style.display = 'block';
+                repeatPrescriptionBtn.style.display = 'block'; // Show for existing patients
+            } else {
+                previousVisitSection.style.display = 'none';
+                repeatPrescriptionBtn.style.display = 'none'; // Hide if no visits
+            }
+            
+            // Show the form and history sections
+            patientFormSection.style.display = 'block';
+            historySection.style.display = 'block';
+            
+            // Set the phone in search for reference
+            searchPhone.value = data.phone;
+            
+            // Clear added remedies set for this patient
+            addedRemedies.clear();
+        }
+        
+        function showVisitDetails(visitIndex) {
+            const patientRecord = getPatientRecord(currentPatient);
+            if (!patientRecord || !patientRecord.visits || visitIndex < 0 || visitIndex >= patientRecord.visits.length) {
+                return;
+            }
+            
+            const visit = patientRecord.visits[visitIndex];
+            
+            prevSymptoms.value = visit.symptoms || '';
+            prevDiagnosis.value = visit.diagnosis || '';
+            prevPrescription.value = visit.prescription || '';
+            
+            currentVisitDisplay.textContent = `Visit ${visitIndex + 1} of ${patientRecord.visits.length}`;
+            
+            // Enable/disable navigation buttons
+            prevVisitBtn.disabled = (visitIndex <= 0);
+            nextVisitBtn.disabled = (visitIndex >= patientRecord.visits.length - 1);
+        }
+        
+        function showPreviousVisit() {
+            if (currentVisitIndex > 0) {
+                currentVisitIndex--;
+                showVisitDetails(currentVisitIndex);
+            }
+        }
+        
+        function showNextVisit() {
+            const patientRecord = getPatientRecord(currentPatient);
+            if (patientRecord && currentVisitIndex < patientRecord.visits.length - 1) {
+                currentVisitIndex++;
+                showVisitDetails(currentVisitIndex);
+            }
+        }
+        
+        function loadVisitHistory(visits) {
+            visitHistory.innerHTML = '';
+            
+            if (visits.length === 0) {
+                visitHistory.innerHTML = '<p>No previous visits recorded.</p>';
+                return;
+            }
+            
+            // Sort visits by date (newest first)
+            visits.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            visits.forEach(visit => {
+                const visitItem = document.createElement('div');
+                visitItem.className = 'visit-item';
+                
+                visitItem.innerHTML = `
+                    <div class="visit-date">${formatDateForDisplay(visit.date)}</div>
+                    <p><strong>Symptoms:</strong> ${visit.symptoms || 'Not recorded'}</p>
+                    <p><strong>Diagnosis:</strong> ${visit.diagnosis || 'Not recorded'}</p>
+                    <p><strong>Prescription:</strong> ${visit.prescription || 'None'}</p>
+                `;
+                
+                visitHistory.appendChild(visitItem);
+            });
+        }
+        
+        function saveVisit() {
+            // Validate required fields
+            const firstNameVal = firstName.value.trim();
+            const sexVal = sex.value;
+            const cityVal = city.value.trim();
+            const phoneVal = phone.value.trim();
+            
+            if (!firstNameVal || !sexVal || !cityVal || !phoneVal) {
+                showSaveStatus('Please fill in all required fields (First Name, Sex, City, Cell Phone)', 'error');
+                return;
+            }
+            
+            // Create patient ID from phone number
+            const patientId = phoneVal.replace(/\D/g, '');
+            
+            // Get existing patient record or create new one
+            let patientRecord = getPatientRecord(patientId) || {
+                firstName: firstNameVal,
+                lastName: lastName.value.trim(),
+                dob: dob.value,
+                age: age.value,
+                sex: sexVal,
+                address: address.value.trim(),
+                city: cityVal,
+                state: state.value,
+                phone: phoneVal,
+                visits: [],
+                createdAt: new Date().toISOString()
+            };
+            
+            // Add new visit
+            const visit = {
+                date: visitDate.value || getTodayDate(),
+                symptoms: symptoms.value.trim(),
+                diagnosis: diagnosis.value.trim(),
+                prescription: prescription.value.trim(),
+                recordedAt: new Date().toISOString()
+            };
+            
+            patientRecord.visits.push(visit);
+            patientRecord.updatedAt = new Date().toISOString();
+            
+            // Save patient record
+            if (savePatientRecord(patientId, patientRecord)) {
+                currentPatient = patientId;
+                
+                // Reload visit history
+                loadVisitHistory(patientRecord.visits);
+                
+                showSaveStatus('Visit saved successfully! Form cleared for next patient.', 'success');
+                
+                // Clear form for next patient (but keep patient info)
+                symptoms.value = '';
+                diagnosis.value = '';
+                prescription.value = '';
+                addedRemedies.clear(); // Clear added remedies set
+                
+                // Update prescription with today's date
+                updatePrescriptionDate();
+                
+                // After a delay, clear the entire form for a new patient
+                setTimeout(() => {
+                    clearPatientForm();
+                    patientFormSection.style.display = 'none';
+                    historySection.style.display = 'none';
+                    searchStatus.style.display = 'none';
+                    currentPatient = null;
+                }, 3000);
+                
+            } else {
+                showSaveStatus('Error saving visit. Please try again.', 'error');
+            }
+        }
+        
+        function showSaveStatus(message, type) {
+            saveStatus.textContent = message;
+            saveStatus.className = `status-message status-${type}`;
+            saveStatus.style.display = 'block';
+        }
+        
+        function repeatPrescription() {
+            if (!currentPatient) {
+                alert('No patient selected. Please search for or create a patient first.');
+                return;
+            }
+            
+            const patientRecord = getPatientRecord(currentPatient);
+            if (!patientRecord) {
+                alert('Patient data not found');
+                return;
+            }
+            
+            const visits = patientRecord.visits || [];
+            
+            if (visits.length === 0) {
+                alert('No previous visits found');
+                return;
+            }
+            
+            // Get the most recent prescription
+            const lastVisit = visits[visits.length - 1];
+            const lastPrescription = lastVisit.prescription;
+            
+            if (!lastPrescription) {
+                alert('No prescription found in last visit');
+                return;
+            }
+            
+            // Extract just the remedies (remove the date line)
+            const prescriptionLines = lastPrescription.split('\n');
+            let remediesText = '';
+            
+            if (prescriptionLines.length > 1) {
+                // Skip the first line (date) and join the rest
+                remediesText = prescriptionLines.slice(1).join('\n').trim();
+            } else {
+                remediesText = lastPrescription;
+            }
+            
+            // Update prescription with today's date and the repeated remedies
+            const dateString = visitDate.value;
+            prescription.value = `Date: ${formatDateForDisplay(dateString)}\n${remediesText}`;
+            
+            showSaveStatus('Last prescription repeated with today\'s date', 'success');
+        }
+        
+        // REMEDIES DATABASE FUNCTIONS
+        
+        async function loadRemediesData() {
+            try {
+                remedyStatus.textContent = 'Loading remedies database...';
+                remedyStatus.className = 'status-message status-info';
+                
+                const sheetId = extractSheetId(currentSheetUrl);
+                const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+                
+                const response = await fetchWithCorsProxy(csvUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load data: ${response.status}`);
+                }
+                
+                const csvText = await response.text();
+                remediesData = parseCSV(csvText);
+                
+                remedyStatus.textContent = `Loaded ${remediesData.length} remedies`;
+                remedyStatus.className = 'status-message status-success';
+                
+                // Display all remedies initially
+                displayRemedies(remediesData);
+                
+            } catch (error) {
+                console.error('Error loading remedies:', error);
+                remedyStatus.textContent = 'Error loading remedies. Using sample data.';
+                remedyStatus.className = 'status-message status-error';
+                
+                // Fallback to sample data
+                useSampleRemediesData();
+            }
+        }
+        
+        function extractSheetId(url) {
+            const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            return match ? match[1] : null;
+        }
+        
+        async function fetchWithCorsProxy(url) {
+            // Try multiple CORS proxies
+            const proxies = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                url // Try direct access
+            ];
+            
+            for (const proxyUrl of proxies) {
+                try {
+                    const response = await fetch(proxyUrl);
+                    if (response.ok) return response;
+                } catch (e) {
+                    console.log(`Proxy failed: ${proxyUrl}`);
+                }
+            }
+            
+            throw new Error('All proxies failed');
+        }
+        
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim());
+            if (lines.length < 2) return [];
+            
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                if (values.length !== headers.length) continue;
+                
+                const item = {};
+                headers.forEach((header, index) => {
+                    item[header] = values[index] || '';
+                });
+                
+                if (item['Remedy Name']) {
+                    data.push(item);
+                }
+            }
+            
+            return data;
+        }
+        
+        function useSampleRemediesData() {
+            remediesData = [
+                {
+                    "Remedy Name": "Aconitum Napellus",
+                    "Potency": "30C",
+                    "BOX Number": "B12",
+                    "Section": "A-1",
+                    "Type": "Tincture",
+                    "Bottle Size": "30ml",
+                    "BottleCapColor": "Blue",
+                    "Manufacturer Brand": "Boiron",
+                    "Available": "Yes",
+                    "Reorder Y/N": "No",
+                    "Reorder Date": ""
+                },
+                {
+                    "Remedy Name": "Arnica Montana",
+                    "Potency": "200C",
+                    "BOX Number": "B07",
+                    "Section": "A-2",
+                    "Type": "Pellets",
+                    "Bottle Size": "15ml",
+                    "BottleCapColor": "Red",
+                    "Manufacturer Brand": "Hyland's",
+                    "Available": "Yes",
+                    "Reorder Y/N": "No",
+                    "Reorder Date": ""
+                }
+            ];
+            
+            displayRemedies(remediesData);
+        }
+        
+        function searchRemedies() {
+            const searchTerm = remedySearch.value.trim().toLowerCase();
+            
+            if (!searchTerm) {
+                displayRemedies(remediesData);
+                return;
+            }
+            
+            // Split by comma for multiple remedies search
+            const terms = searchTerm.split(',').map(t => t.trim());
+            let results = [];
+            
+            terms.forEach(term => {
+                if (!term) return;
+                
+                // Check if it's a potency-only search (contains numbers)
+                const hasNumbers = /\d/.test(term);
+                
+                const termResults = remediesData.filter(remedy => {
+                    const name = remedy['Remedy Name'].toLowerCase();
+                    const potency = remedy['Potency'].toLowerCase();
+                    
+                    if (hasNumbers) {
+                        // If term has numbers, check if it matches potency
+                        return potency.includes(term);
+                    } else {
+                        // Otherwise, search by name
+                        return name.includes(term);
+                    }
+                });
+                
+                results = [...results, ...termResults];
+            });
+            
+            // Remove duplicates
+            results = results.filter((remedy, index, self) => 
+                index === self.findIndex(r => 
+                    r['Remedy Name'] === remedy['Remedy Name'] && 
+                    r['Potency'] === remedy['Potency']
+                )
+            );
+            
+            displayRemedies(results);
+        }
+        
+        function displayRemedies(remedies) {
+            remedyList.innerHTML = '';
+            
+            if (remedies.length === 0) {
+                remedyList.innerHTML = '<p>No remedies found.</p>';
+                return;
+            }
+            
+            remedies.forEach(remedy => {
+                const remedyItem = document.createElement('div');
+                const isAvailable = remedy['Available'] === 'Yes';
+                remedyItem.className = `remedy-item ${isAvailable ? 'available' : 'unavailable'}`;
+                
+                remedyItem.innerHTML = `
+                    <div class="remedy-info">
+                        <div class="remedy-name">${remedy['Remedy Name']} ${remedy['Potency']}</div>
+                        <div class="remedy-details">
+                            Box: ${remedy['BOX Number']} | Section: ${remedy['Section']}
+                            ${remedy['Reorder Date'] ? ` | Reorder: ${remedy['Reorder Date']}` : ''}
+                        </div>
+                    </div>
+                    <div class="remedy-actions">
+                        <span class="info-link" title="View remedy details">
+                            <i class="fas fa-info-circle"></i>
+                        </span>
+                    </div>
+                `;
+                
+                // Add click event to add remedy to prescription
+                remedyItem.addEventListener('click', () => {
+                    if (isAvailable) {
+                        // Add to prescription only if not already added
+                        const remedyKey = `${remedy['Remedy Name']} ${remedy['Potency']}`;
+                        
+                        if (!addedRemedies.has(remedyKey)) {
+                            const currentPrescription = prescription.value.trim();
+                            const remedyText = remedyKey;
+                            
+                            // Check if we need to add the date header
+                            let newPrescription = currentPrescription;
+                            if (!newPrescription.includes('Date:')) {
+                                const dateString = visitDate.value;
+                                newPrescription = `Date: ${formatDateForDisplay(dateString)}\n${newPrescription}`;
+                            }
+                            
+                            if (newPrescription && !newPrescription.endsWith('\n') && !newPrescription.endsWith(',')) {
+                                newPrescription += ', ';
+                            }
+                            
+                            prescription.value = newPrescription + remedyText;
+                            addedRemedies.add(remedyKey); // Mark as added
+                        } else {
+                            showSaveStatus('Remedy already added to prescription', 'info');
+                        }
+                    } else {
+                        // Show details
+                        showRemedyDetails(remedy);
+                    }
+                });
+                
+                // Add click event to info icon for details
+                const infoLink = remedyItem.querySelector('.info-link');
+                infoLink.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent triggering the parent click event
+                    showRemedyDetails(remedy);
+                });
+                
+                remedyList.appendChild(remedyItem);
+            });
+        }
+        
+        function showRemedyDetails(remedy) {
+            remedyDetailContent.innerHTML = `
+                <h4>${remedy['Remedy Name']} ${remedy['Potency']}</h4>
+                <p><strong>Box:</strong> ${remedy['BOX Number']}</p>
+                <p><strong>Section:</strong> ${remedy['Section']}</p>
+                <p><strong>Type:</strong> ${remedy['Type']}</p>
+                <p><strong>Bottle Size:</strong> ${remedy['Bottle Size']}</p>
+                <p><strong>Cap Color:</strong> ${remedy['BottleCapColor']}</p>
+                <p><strong>Brand:</strong> ${remedy['Manufacturer Brand']}</p>
+                <p><strong>Available:</strong> <span style="color: ${remedy['Available'] === 'Yes' ? 'green' : 'red'}">${remedy['Available']}</span></p>
+                ${remedy['Reorder Date'] ? `<p><strong>Reorder Date:</strong> ${remedy['Reorder Date']}</p>` : ''}
+            `;
+            
+            const remedyName = remedy['Remedy Name'].toLowerCase().replace(/\s+/g, '-');
+            remedyDetailFrame.src = `${MATERIA_MEDICA_BASE_URL}${remedyName}`;
+            
+            detailsModal.style.display = 'flex';
+        }
+        
+        function connectToAlternateDataSource() {
+            const url = sheetUrlInput.value.trim();
+            
+            if (!url) {
+                dataSourceStatus.innerHTML = '<div class="status-message status-error">Please enter a URL</div>';
+                return;
+            }
+            
+            currentSheetUrl = url;
+            dataSourceModal.style.display = 'none';
+            loadRemediesData();
+        }
+    </script>
+</body>
+</html>
