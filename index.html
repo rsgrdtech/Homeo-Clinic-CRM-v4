@@ -614,7 +614,60 @@
             visitDate.value = today;
             
             // Update prescription with today's date
-            updatePrescriptionDate();
+           // updatePrescriptionDate();
+//---------------
+function updatePrescriptionDate() {
+    // Get the current date value (already selected in the form)
+    const dateString = visitDate.value;
+    
+    // If no date is selected, use today's date
+    if (!dateString) {
+        const today = getTodayDate();
+        visitDate.value = today;
+        dateString = today;
+    }
+    
+    // Clear and update prescription with selected date
+    const currentText = prescription.value;
+    
+    // Remove any existing date header
+    const lines = currentText.split('\n');
+    if (lines.length > 0 && lines[0].includes('Date:')) {
+        lines.shift(); // Remove the date line
+    }
+    
+    // Add new date header
+    const newText = `Date: ${formatDateForDisplay(dateString)}\n${lines.join('\n')}`;
+    prescription.value = newText.trim();
+}
+
+function getTodayDate() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function formatDateForDisplay(dateString) {
+    // Parse the date string correctly
+    const dateObj = new Date(dateString);
+    
+    // Ensure the date is valid
+    if (isNaN(dateObj.getTime())) {
+        // If invalid, use today's date
+        const today = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return today.toLocaleDateString(undefined, options);
+    }
+    
+    // Format the date properly
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return dateObj.toLocaleDateString(undefined, options);
+}
+
+
+//--------------
             
             // Load remedies database
             loadRemediesData();
